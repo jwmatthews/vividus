@@ -2,9 +2,11 @@ use iced::{
     Color, Element, Length, Sandbox
 };
 use iced::widget::{
-    column, container, horizontal_space, row,
-    scrollable
+    column, container, horizontal_space, image, row,
+    scrollable, text
 };
+
+use iced::widget::Container;
 
 
 #[derive(Debug, Clone, Copy)]
@@ -49,7 +51,7 @@ impl Sandbox for App {
         controls = controls.push(horizontal_space(Length::Fill));
 
         let content: Element<_> = column![
-            controls,
+            controls, ferris(200)
         ]
         .max_width(540)
         .spacing(20)
@@ -68,4 +70,14 @@ impl Sandbox for App {
 
         container(scrollable).height(Length::Fill).center_y().into()
     }
+
+}
+
+fn ferris<'a>(width: u16) -> Container<'a, Message> {
+    container(
+        image(format!("{}/images/ferris.png", env!("CARGO_MANIFEST_DIR")))
+        .width(width),
+    )
+    .width(Length::Fill)
+    .center_x()
 }
