@@ -1,12 +1,13 @@
 use iced::{
     Color, Element, Length, Sandbox
 };
+use iced::alignment;
 use iced::widget::{
     column, container, horizontal_space, image, row,
     scrollable, text
 };
-
-use iced::widget::Container;
+use iced::theme;
+use iced::widget::{Button, Container};
 
 
 #[derive(Debug, Clone, Copy)]
@@ -48,10 +49,17 @@ impl Sandbox for App {
 
         let mut controls = row![];
 
+        controls = controls.push(button("Back")
+                .on_press(Message::BackPressed)
+                .style(theme::Button::Secondary));
         controls = controls.push(horizontal_space(Length::Fill));
+        controls = controls.push(button("Next")
+                .on_press(Message::NextPressed)
+                .style(theme::Button::Secondary));
 
         let content: Element<_> = column![
-            controls, ferris(200)
+            controls,
+            ferris(200),
         ]
         .max_width(540)
         .spacing(20)
@@ -80,4 +88,12 @@ fn ferris<'a>(width: u16) -> Container<'a, Message> {
     )
     .width(Length::Fill)
     .center_x()
+}
+
+fn button<'a, Message: Clone>(label: &str) -> Button<'a, Message> {
+    iced::widget::button(
+        text(label).horizontal_alignment(alignment::Horizontal::Center),
+    )
+    .padding(12)
+    .width(100)
 }
