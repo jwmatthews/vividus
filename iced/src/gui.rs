@@ -36,9 +36,11 @@ impl Sandbox for App {
     fn update(&mut self, event: Message) {
         match event {
             Message::BackPressed => {
+                println!("Back pressed");
                 //self.back();
             }
             Message::NextPressed => {
+                println!("Next pressed");
                 //self.next();
             }
         }
