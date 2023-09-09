@@ -8,6 +8,9 @@ use iced::widget::{
 };
 use iced::theme;
 use iced::widget::{Button, Container};
+use glob::glob;
+use std::path::Path;
+use std::path::PathBuf;
 
 
 #[derive(Debug, Clone, Copy)]
@@ -16,16 +19,34 @@ pub enum Message {
     NextPressed,
 }
 
+macro_rules! vec_of_strings {
+    ($($x:expr),*) => (vec![$($x.to_string()),*]);
+}
+
+// TODO
+// 1. Add a button to go back and forth between images
+// 2. Add a button to toggle debug mode
+        
 pub struct App {
  debug: bool,
+ image_index: usize,
+ images: Vec<String>,
 }
 
 impl Sandbox for App {
     type Message = Message;
 
     fn new() -> App {
+        
+
         App {
-            debug: false,
+            debug: true,
+            image_index: 0,
+            images: vec_of_strings![
+                "images/ferris.png", 
+                 "images/ferris2.jpg", 
+                 "images/ferris3.jpg", 
+                 "images/rust.jpg"]
         }
     }
 
@@ -37,11 +58,10 @@ impl Sandbox for App {
         match event {
             Message::BackPressed => {
                 println!("Back pressed");
-                //self.back();
+                //image_index = image_index + 1
             }
             Message::NextPressed => {
                 println!("Next pressed");
-                //self.next();
             }
         }
     }
@@ -61,7 +81,7 @@ impl Sandbox for App {
 
         let content: Element<_> = column![
             controls,
-            ferris(200),
+            ferris(200, &self.images[self.image_index]),
         ]
         .max_width(540)
         .spacing(20)
@@ -83,9 +103,12 @@ impl Sandbox for App {
 
 }
 
-fn ferris<'a>(width: u16) -> Container<'a, Message> {
+fn ferris<'a>(width: u16, image_path: &str) -> Container<'a, Message> {
+    // TODO: use a different image based on the image_index
+    println!("in ferris image_path: {}", image_path);
     container(
-        image(format!("{}/images/ferris.png", env!("CARGO_MANIFEST_DIR")))
+        //image(format!("{}/images/ferris.png", env!("CARGO_MANIFEST_DIR")))
+        image(format!("{}{}", env!("CARGO_MANIFEST_DIR"), image_path))
         .width(width),
     )
     .width(Length::Fill)
@@ -98,4 +121,39 @@ fn button<'a, Message: Clone>(label: &str) -> Button<'a, Message> {
     )
     .padding(12)
     .width(100)
+}
+
+fn list_images(image_dir: &str) -> Vec<PathBuf> {
+    let manifest_path = Path::new(env!("CARGO_MANIFEST_DIR"));
+    let image_path = manifest_path.join(image_dir);
+    let search_path = format!("{}/*", image_path.to_str().unwrap());
+
+
+    let mut x = Vec::<PathBuf>::new();
+
+    match glob(search_path.as_str()) {
+        Ok(files) => {
+            x = files.filter(|x| x.is_ok()).map(|x| x.unwrap()).collect();
+
+        }
+        Err(e) => println!("Error listing images: {}", e), 
+    }
+    println!("x: {:?}", x);
+    return x;
+}
+
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const IMG_DIR: &str = "images";
+
+    #[test]
+    fn test_list_images() {
+        
+        let files =  list_images(IMG_DIR);
+        assert_eq!(files.len(), 4);
+    }
 }
