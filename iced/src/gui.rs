@@ -30,23 +30,18 @@ macro_rules! vec_of_strings {
 pub struct App {
  debug: bool,
  image_index: usize,
- images: Vec<String>,
+ images: Vec<PathBuf>,
 }
 
 impl Sandbox for App {
     type Message = Message;
 
     fn new() -> App {
-        
-
+        let images = list_images("images");
         App {
-            debug: true,
+            debug: false,
             image_index: 0,
-            images: vec_of_strings![
-                "images/ferris.png", 
-                 "images/ferris2.jpg", 
-                 "images/ferris3.jpg", 
-                 "images/rust.jpg"]
+            images: images
         }
     }
 
@@ -57,11 +52,12 @@ impl Sandbox for App {
     fn update(&mut self, event: Message) {
         match event {
             Message::BackPressed => {
-                println!("Back pressed");
-                //image_index = image_index + 1
+                println!("Back pressed: self.image_index = '{}'", self.image_index);
+                self.image_index = decrease_image_index(self.images.len(), self.image_index);
             }
             Message::NextPressed => {
-                println!("Next pressed");
+                println!("Next pressed: self.image_index = '{}'", self.image_index);
+                self.image_index = increase_image_index(self.images.len(), self.image_index);
             }
         }
     }
@@ -103,12 +99,10 @@ impl Sandbox for App {
 
 }
 
-fn ferris<'a>(width: u16, image_path: &str) -> Container<'a, Message> {
-    // TODO: use a different image based on the image_index
-    println!("in ferris image_path: {}", image_path);
+fn ferris<'a>(width: u16, image_path: &PathBuf) -> Container<'a, Message> {
+    println!("in ferris image_path: {}", image_path.display());
     container(
-        //image(format!("{}/images/ferris.png", env!("CARGO_MANIFEST_DIR")))
-        image(format!("{}{}", env!("CARGO_MANIFEST_DIR"), image_path))
+        image(image_path)
         .width(width),
     )
     .width(Length::Fill)
@@ -142,7 +136,25 @@ fn list_images(image_dir: &str) -> Vec<PathBuf> {
     return x;
 }
 
+fn increase_image_index(length: usize, image_index: usize) -> usize {
+    if length == 0 {
+        return 0;
+    } else if image_index == length - 1 {
+        return 0;
+    } else {
+        return image_index + 1;
+    }
+}
 
+fn decrease_image_index(length: usize, image_index: usize) -> usize {
+    if length == 0 {
+        return 0;
+    } else if image_index == 0 {
+        return length - 1;
+     } else {
+        return image_index - 1;
+     }
+}
 
 #[cfg(test)]
 mod tests {
@@ -156,4 +168,60 @@ mod tests {
         let files =  list_images(IMG_DIR);
         assert_eq!(files.len(), 4);
     }
+    
+    #[test]
+    fn test_decrease_image_index() {
+
+        let length = 3;
+        let mut image_index = 0;
+        
+        // Normal Usage
+
+        image_index = decrease_image_index(length, image_index);
+        assert_eq!(image_index, 2);
+        
+        image_index = decrease_image_index(length, image_index);
+        assert_eq!(image_index, 1);
+        
+        image_index = decrease_image_index(length, image_index);
+        assert_eq!(image_index, 0);
+        
+        image_index = decrease_image_index(length, image_index);
+        assert_eq!(image_index, 2);
+        
+        // Edge cases
+
+        image_index = decrease_image_index(0, 0);
+        assert_eq!(image_index, 0);
+
+    }
+
+    
+    #[test]
+    fn test_increase_image_index() {
+
+        let length = 3;
+        let mut image_index = 0;
+        
+        // Normal Usage
+
+        image_index = increase_image_index(length, image_index);
+        assert_eq!(image_index, 1);
+        
+        image_index = increase_image_index(length, image_index);
+        assert_eq!(image_index, 2);
+        
+        image_index = increase_image_index(length, image_index);
+        assert_eq!(image_index, 0);
+        
+        image_index = increase_image_index(length, image_index);
+        assert_eq!(image_index, 1);
+        
+        // Edge cases
+
+        image_index = increase_image_index(0, 0);
+        assert_eq!(image_index, 0);
+
+    }
+
 }
