@@ -6,10 +6,16 @@ import "./App.css";
 function App() {
   const [greetMsg, setGreetMsg] = useState("");
   const [name, setName] = useState("");
+  const [imagePath, setImagePath] = useState("");
+  const [images, setImages] = useState("");
 
   async function greet() {
     // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
     setGreetMsg(await invoke("greet", { name }));
+  }
+
+  async function get_images() {
+      setImages(await invoke("list_images", {imagePath}));
   }
 
   return (
@@ -46,6 +52,23 @@ function App() {
       </form>
 
       <p>{greetMsg}</p>
+
+      <form
+        className="row"
+        onSubmit={(e) => {
+          e.preventDefault();
+          get_images();
+        }}
+      >
+        <input
+          id="getimages-input"
+          onChange={(e) => setImagePath(e.currentTarget.value)}
+          placeholder="/Users/jmatthews/Pictures/Wulfgar"
+        />
+        <button type="submit">Update image path</button>
+      </form>
+
+      <p>{images}</p>
     </div>
   );
 }
