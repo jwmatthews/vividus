@@ -12,9 +12,9 @@ fn greet(name: &str) -> String {
 }
 
 #[tauri::command]
-fn list_images(image_dir: &str) -> Vec<PathBuf> {
+fn list_images(image_path: &str) -> Vec<PathBuf> {
     let manifest_path = Path::new(env!("CARGO_MANIFEST_DIR"));
-    let image_path = manifest_path.join(image_dir);
+    let image_path = manifest_path.join(image_path);
     let search_path = format!("{}/*", image_path.to_str().unwrap());
 
     let mut x = Vec::<PathBuf>::new();

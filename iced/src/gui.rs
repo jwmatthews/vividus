@@ -125,7 +125,8 @@ fn button<'a, Message: Clone>(label: &str) -> Button<'a, Message> {
 fn list_images(image_dir: &str) -> Vec<PathBuf> {
     let manifest_path = Path::new(env!("CARGO_MANIFEST_DIR"));
     let image_path = manifest_path.join(image_dir);
-    let search_path = format!("{}/*", image_path.to_str().unwrap());
+    let _search_path = format!("{}/*", image_path.to_str().unwrap());
+    let search_path = format!("/Users/jmatthews/Pictures/2022_Disney_Nov/786257e0-a969-4338-abf9-2adf9bf952a3/*");
 
     let mut x = Vec::<PathBuf>::new();
 
