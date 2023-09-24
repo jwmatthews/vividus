@@ -4,7 +4,7 @@ import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
 import { ask } from '@tauri-apps/api/dialog';
 import { readBinaryFile, BaseDirectory } from '@tauri-apps/api/fs';
-
+//import { pictureDir } from '@tauri-apps/api/path';
 
 function App() {
   const [greetMsg, setGreetMsg] = useState("");
@@ -38,8 +38,12 @@ function App() {
 
   async function loadTestImage() {
     console.error("fetchTestImage");
-    const contents = await readBinaryFile('/Users/jmatthews/Pictures/therapysword.jpeg', { dir: BaseDirectory.Resource });
-    setTestImage( await  'data:image/jpeg;base64,' + hexToBase64(contents) );
+    //const pictureDirPath = await pictureDir();
+    //const myPicPath = await join(pictureDirPath, 'therapysword.jpeg');
+
+    const contents = await readBinaryFile('therapysword.jpeg', { dir: BaseDirectory.Picture });
+    //setTestImage( await  'data:image/jpeg;base64,' + hexToBase64(contents) );
+    setTestImage( await  'data:image/jpeg;,' + contents );
   }
 
 
