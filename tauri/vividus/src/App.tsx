@@ -11,6 +11,11 @@ function App() {
   const [name, setName] = useState("");
   const [imagePath, setImagePath] = useState("");
   const [images, setImages] = useState([]);
+  const [testImage, setTestImage] = useState("");
+
+  function hexToBase64(str: any) {
+    return btoa(String.fromCharCode.apply(null, str.replace(/\r|\n/g, "").replace(/([\da-fA-F]{2}) ?/g, "0x$1 ").replace(/ +$/, "").split(" ")));
+  }
 
   async function greet() {
     // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
@@ -31,6 +36,13 @@ function App() {
     console.error("yes2 is " + yes2);
   }
 
+  async function loadTestImage() {
+    console.error("fetchTestImage");
+    const contents = await readBinaryFile('/Users/jmatthews/Pictures/therapysword.jpeg', { dir: BaseDirectory.Resource });
+    setTestImage( await  'data:image/jpeg;base64,' + hexToBase64(contents) );
+  }
+
+
   // Example from: https://tauri.app/v1/api/js/fs/#readbinaryfile
   // Read the image file in the `$RESOURCEDIR/avatar.png` path
   // const contents = await readBinaryFile('avatar.png', { dir: BaseDirectory.Resource });
@@ -41,6 +53,12 @@ function App() {
   // Is it possible to grant the WebView process to the entire local filesystem?
   // If not, I could copy images to Resource Directory
   //
+  // Or...
+  // Use the fs API to read files in a directory
+  // Iterate over and use readBinaryFile, that will return the contents via IPC comm to webview process
+  // In Webview process display the binary image data
+  // https://stackoverflow.com/questions/14915058/how-to-display-binary-data-as-image-extjs-4
+  // https://stackoverflow.com/questions/18650168/convert-blob-to-base64
 
 
   return (
@@ -101,8 +119,8 @@ function App() {
 
       <div>
         <p>Test area to load Ferris image</p>
-
-
+        <img src={testImage} alt="Ferris" width="500" height="600"/>
+        <button onClick={loadTestImage}>Load Test Image</button>
       </div>
       <div>
         {images.map((image, index) => (
