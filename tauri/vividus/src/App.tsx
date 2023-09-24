@@ -3,6 +3,7 @@ import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
 import { ask } from '@tauri-apps/api/dialog';
+import { readBinaryFile, BaseDirectory } from '@tauri-apps/api/fs';
 
 
 function App() {
@@ -29,6 +30,18 @@ function App() {
     console.error("yes is " + yes);
     console.error("yes2 is " + yes2);
   }
+
+  // Example from: https://tauri.app/v1/api/js/fs/#readbinaryfile
+  // Read the image file in the `$RESOURCEDIR/avatar.png` path
+  // const contents = await readBinaryFile('avatar.png', { dir: BaseDirectory.Resource });
+  //
+  // Issue:  WebView is not able to read the entire local filesystem.
+  //        It can only read the contents of the resource directory.
+  //        The resource directory is the directory where the executable is located.
+  // Is it possible to grant the WebView process to the entire local filesystem?
+  // If not, I could copy images to Resource Directory
+  //
+
 
   return (
     <div className="container">
@@ -86,6 +99,11 @@ function App() {
         ))}
       </ul> */}
 
+      <div>
+        <p>Test area to load Ferris image</p>
+
+
+      </div>
       <div>
         {images.map((image, index) => (
           <img src={image} alt="{index}" width="500" height="600"/>
