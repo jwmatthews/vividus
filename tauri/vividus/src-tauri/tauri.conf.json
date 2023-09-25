@@ -40,6 +40,14 @@
       },
       "path": {
         "all": true
+      },
+      "protocol": {
+        "asset": true,
+        "assetScope": [
+          "$APPCACHE/**",
+          "$RESOURCE/**",
+          "$PICTURE/*"
+        ]
       }
     },
     "bundle": {
@@ -55,7 +63,7 @@
       ]
     },
     "security": {
-      "csp": null
+      "csp": "default-src 'self'; img-src 'self' asset: https://asset.localhost"
     },
     "windows": [
       {

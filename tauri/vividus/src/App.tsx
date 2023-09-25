@@ -4,7 +4,8 @@ import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
 import { ask } from '@tauri-apps/api/dialog';
 import { readBinaryFile, BaseDirectory } from '@tauri-apps/api/fs';
-//import { pictureDir } from '@tauri-apps/api/path';
+import { pictureDir, join } from '@tauri-apps/api/path';
+import { convertFileSrc } from '@tauri-apps/api/tauri';
 
 function App() {
   const [greetMsg, setGreetMsg] = useState("");
@@ -38,12 +39,15 @@ function App() {
 
   async function loadTestImage() {
     console.error("fetchTestImage");
-    //const pictureDirPath = await pictureDir();
-    //const myPicPath = await join(pictureDirPath, 'therapysword.jpeg');
+    const pictureDirPath = await pictureDir();
+    const myPicPath = await join(pictureDirPath, 'therapysword.jpeg');
 
-    const contents = await readBinaryFile('therapysword.jpeg', { dir: BaseDirectory.Picture });
+    const assetUrl = convertFileSrc(myPicPath);
+    setTestImage(assetUrl);
+
+   // const contents = await readBinaryFile('therapysword.jpeg', { dir: BaseDirectory.Picture });
     //setTestImage( await  'data:image/jpeg;base64,' + hexToBase64(contents) );
-    setTestImage( await  'data:image/jpeg;,' + contents );
+    //setTestImage( await  'data:image/jpeg;,' + contents );
   }
 
 
@@ -63,6 +67,10 @@ function App() {
   // In Webview process display the binary image data
   // https://stackoverflow.com/questions/14915058/how-to-display-binary-data-as-image-extjs-4
   // https://stackoverflow.com/questions/18650168/convert-blob-to-base64
+  //
+  //
+  // https://github.com/tauri-apps/tauri/discussions/7145
+
 
 
   return (
